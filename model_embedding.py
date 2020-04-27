@@ -1,12 +1,8 @@
-## this is embedding part
-# requirement:
-
 import math
 
 import tensorflow as tf
 import numpy as np
 import math
-import pickle
 
 from collections import defaultdict
 
@@ -69,11 +65,6 @@ class Embedding:
 		# variables in embedding models
 		bound = 6 / math.sqrt(self.__dimension)
 
-		# load preo-train embeddings
-		load_embedding_entities = pickle.load(open('./save/99_embedding_ent.pickle', 'rb'))
-		load_embedding_relations = pickle.load(open('./save/99_embedding_rel.pickle', 'rb'))
-
-
 		with tf.device('/gpu'):
 			self.__embedding_entities = tf.get_variable('embedding_entities',
 													  [self.__num_entities, self.__dimension],
@@ -83,14 +74,6 @@ class Embedding:
 			self.__embedding_relations = tf.get_variable('embedding_relations', [self.__num_relations, self.__dimension],
 												initializer=tf.random_uniform_initializer(minval=-bound, maxval=bound,
 																							))
-			#self.__embedding_entities = tf.get_variable('embedding_entities',
-			#											dtype=tf.float32,
-			#											initializer=tf.constant(load_embedding_entities))
-
-			#self.__embedding_relations = tf.get_variable('embedding_relation',
-			#											 dtype=tf.float32,
-			#											 initializer=tf.constant(load_embedding_relations))
-
 
 			self.__variables.append(self.__embedding_entities)
 			self.__variables.append(self.__embedding_relations)
@@ -370,15 +353,6 @@ class Embedding:
 		r_pos_out = np.asarray(r_pos).reshape([-1, 1])
 		t_pos_out = np.asarray(t_pos).reshape([-1, 1])
 		t_neg_out = np.asarray(t_neg).reshape([-1, 1])
-		'''
-		print('num_neighbor:', num_neighbor)
-		print('h_pos shape:', np.asarray(h_pos).shape)
-		print('r_pos shape:', np.asarray(r_pos).shape)
-		print('t_pos shape:', np.asarray(t_pos).shape)
-		print('t_neg shape:', np.asarray(t_neg).shape)
-		print('h_neighbor_out shape:', h_neighbor_out.shape)
-		print('mask_out:', mask_out.shape)
-		'''
 
 		return h_pos_out, h_neighbor_out, r_pos_out, t_pos_out, t_neg_out, mask_out, num_neighbor
 
@@ -388,21 +362,3 @@ class Embedding:
 		h_neighbor = self.__h_rt[h_pos]
 		t = self.__scenes.index(t_pos)
 		return [h_pos], h_neighbor, [r_pos], [t],[t_pos]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
